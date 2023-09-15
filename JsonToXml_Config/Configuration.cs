@@ -141,5 +141,11 @@ namespace JsonToXml_Config
             get => Convert.ToBoolean(ConfigurationSettings.ReadAppSetting(nameof(JsonToXmlUseConverter)));
             set => ConfigurationSettings.WriteAppSetting(nameof(JsonToXmlUseConverter), Convert.ToString(value));
         }
+
+        public static Boolean JsonToXmlUseLogging
+        {
+            get => Convert.ToBoolean(ConfigurationSettings.ReadAppSetting(nameof(JsonToXmlUseLogging)));
+            set => ConfigurationSettings.WriteAppSetting(nameof(JsonToXmlUseLogging), Convert.ToString(value));
+        }
     }
 }

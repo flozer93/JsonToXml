@@ -10,37 +10,68 @@ using NLog;
 
 namespace JsonToXml_Lib
 {
-    public static class JsonToXml
+    public class JsonToXml
     {
+        private const string LogConfigFileName = "NLog.config";
+        //private static Boolean loggingEnabled = File.Exists(System.IO.Directory.GetCurrentDirectory() + @"\NLog.config");
+        //private static Boolean loggingEnabled = File.Exists(Environment.CurrentDirectory + @"\NLog.config");
+        //private static Boolean loggingEnabled = File.Exists(Environment.CurrentDirectory + @"\" + LogConfigFileName);
+        private static Boolean loggingEnabled = File.Exists(Path.Combine(Environment.CurrentDirectory, LogConfigFileName));
+        //private static Boolean loggingEnabled = File.Exists(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase), LogConfigFileName));
+
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public static void RunJsonToXmlWithOutConfig(string sourcedir, string targetdir, string archivedir)
         {
             if (string.IsNullOrEmpty(sourcedir) || string.IsNullOrEmpty(targetdir))
             {
+                DoLogError(string.Format("Parameter not valid:\n sourcedir: {0}\n archivedir: {1}", sourcedir, archivedir));
                 throw new ArgumentException();
             }
             try
             {
                 LoopJson(sourcedir, targetdir, archivedir);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                DoLogError(ex.ToString());
+            }
         }
 
         public static void RunJsonToXmlWithConfig()
         {
             try
             {
-                ConfigurationSettings.LoadConfig();
+                try
+                {
+                    ConfigurationSettings.LoadConfig();
+                    if (!ConfigurationSettings.JsonToXmlUseLogging)
+                    {
+                        loggingEnabled = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    DoLogError($"{ex.Message}");
+                    DoLogWarn($"No Config found!");
+                }
+
                 if (string.IsNullOrEmpty(ConfigurationSettings.JsonToXmlJsonPath) || string.IsNullOrEmpty(ConfigurationSettings.JsonToXmlJsonPath))
                 {
+                    string exString = string.Format("Config not valid:\nJsonToXmlJsonPath:{0}\nJsonToXmlJsonPath:{1}", ConfigurationSettings.JsonToXmlJsonPath, ConfigurationSettings.JsonToXmlJsonPath);
+                    DoLogError(exString);
                     throw new Exception();
                 }
                 else
                 {
+                    DoLogDebug("RunJsonToXmlWithConfig - LoopJson");
                     LoopJson(ConfigurationSettings.JsonToXmlJsonPath, ConfigurationSettings.JsonToXmlXmlPath, ConfigurationSettings.JsonToXmlArchiveJsonPath);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                DoLogError(ex.ToString());
+            }
         }
 
         private static void LoopJson(string sourcedir, string targetdir, string archivedir)
@@ -55,10 +86,12 @@ namespace JsonToXml_Lib
                     if (!string.IsNullOrEmpty(archivedir))
                     {
                         file.MoveTo(archivedir + file.Name);
+                        DoLogInformation("Archived: " + archivedir + file.Name);
                     }
                 }
-                catch //(Exception ex)
+                catch (Exception ex)
                 {
+                    DoLogError(ex.ToString());
                 }
             }
         }
@@ -88,9 +121,39 @@ namespace JsonToXml_Lib
                     xmlDoc.Add(root);
                     xmlDoc.Save(xmlfile);
                 }
+                DoLogInformation("Converted: " + jsonfile);
             }
-            catch //(Exception ex)
+            catch (Exception ex)
             {
+                DoLogError(ex.ToString());
+            }
+        }
+        private static void DoLogInformation(string message)
+        {
+            if (loggingEnabled)
+            {
+                _logger.Info(message);
+            }
+        }
+        private static void DoLogWarn(string message)
+        {
+            if (loggingEnabled)
+            {
+                _logger.Warn(message);
+            }
+        }
+        private static void DoLogError(string message)
+        {
+            if (loggingEnabled)
+            {
+                _logger.Error(message);
+            }
+        }
+        private static void DoLogDebug(string message)
+        {
+            if (loggingEnabled)
+            {
+                _logger.Debug(message);
             }
         }
     }

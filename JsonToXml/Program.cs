@@ -16,9 +16,10 @@ namespace JsonToXml
             {
                 JsonToXml_Lib.JsonToXml.RunJsonToXmlWithConfig();
             }
-            catch
+            catch (Exception ex)
             {
-                //throw;
+                Console.WriteLine(ex.Message);
+                throw ex;
             }
         }
     }

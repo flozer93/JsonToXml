@@ -34,9 +34,11 @@ namespace JsonToXml_Config
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormConfig));
             this.Btn_SaveConfig = new System.Windows.Forms.Button();
             this.Btn_SaveExit = new System.Windows.Forms.Button();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.Cb_JsonToXmlUseLogging = new System.Windows.Forms.CheckBox();
             this.L_JsonToXmlArchiveJsonPath = new System.Windows.Forms.Label();
             this.Tb_JsonToXmlArchiveJsonPath = new System.Windows.Forms.TextBox();
             this.Cb_JsonToXmlUseConverter = new System.Windows.Forms.CheckBox();
@@ -51,28 +53,21 @@ namespace JsonToXml_Config
             // 
             // Btn_SaveConfig
             // 
-            this.Btn_SaveConfig.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Btn_SaveConfig.Location = new System.Drawing.Point(713, 415);
+            resources.ApplyResources(this.Btn_SaveConfig, "Btn_SaveConfig");
             this.Btn_SaveConfig.Name = "Btn_SaveConfig";
-            this.Btn_SaveConfig.Size = new System.Drawing.Size(75, 23);
-            this.Btn_SaveConfig.TabIndex = 6;
-            this.Btn_SaveConfig.Text = "Save";
             this.Btn_SaveConfig.UseVisualStyleBackColor = true;
             this.Btn_SaveConfig.Click += new System.EventHandler(this.Btn_SaveConfig_Click);
             // 
             // Btn_SaveExit
             // 
-            this.Btn_SaveExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Btn_SaveExit.Location = new System.Drawing.Point(609, 415);
+            resources.ApplyResources(this.Btn_SaveExit, "Btn_SaveExit");
             this.Btn_SaveExit.Name = "Btn_SaveExit";
-            this.Btn_SaveExit.Size = new System.Drawing.Size(98, 23);
-            this.Btn_SaveExit.TabIndex = 8;
-            this.Btn_SaveExit.Text = "Save and Exit";
             this.Btn_SaveExit.UseVisualStyleBackColor = true;
             this.Btn_SaveExit.Click += new System.EventHandler(this.Btn_SaveExit_Click);
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.Cb_JsonToXmlUseLogging);
             this.tabPage1.Controls.Add(this.L_JsonToXmlArchiveJsonPath);
             this.tabPage1.Controls.Add(this.Tb_JsonToXmlArchiveJsonPath);
             this.tabPage1.Controls.Add(this.Cb_JsonToXmlUseConverter);
@@ -80,96 +75,67 @@ namespace JsonToXml_Config
             this.tabPage1.Controls.Add(this.L_XmlPath);
             this.tabPage1.Controls.Add(this.Tb_JsonToXmlJsonPath);
             this.tabPage1.Controls.Add(this.Tb_JsonToXmlXmlPath);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            resources.ApplyResources(this.tabPage1, "tabPage1");
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(768, 371);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Json to Xml";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // Cb_JsonToXmlUseLogging
+            // 
+            resources.ApplyResources(this.Cb_JsonToXmlUseLogging, "Cb_JsonToXmlUseLogging");
+            this.Cb_JsonToXmlUseLogging.Name = "Cb_JsonToXmlUseLogging";
+            this.Cb_JsonToXmlUseLogging.UseVisualStyleBackColor = true;
             // 
             // L_JsonToXmlArchiveJsonPath
             // 
-            this.L_JsonToXmlArchiveJsonPath.AutoSize = true;
-            this.L_JsonToXmlArchiveJsonPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.L_JsonToXmlArchiveJsonPath.Location = new System.Drawing.Point(6, 66);
+            resources.ApplyResources(this.L_JsonToXmlArchiveJsonPath, "L_JsonToXmlArchiveJsonPath");
             this.L_JsonToXmlArchiveJsonPath.Name = "L_JsonToXmlArchiveJsonPath";
-            this.L_JsonToXmlArchiveJsonPath.Size = new System.Drawing.Size(114, 13);
-            this.L_JsonToXmlArchiveJsonPath.TabIndex = 116;
-            this.L_JsonToXmlArchiveJsonPath.Text = "Json Archive Path:";
             // 
             // Tb_JsonToXmlArchiveJsonPath
             // 
-            this.Tb_JsonToXmlArchiveJsonPath.Location = new System.Drawing.Point(129, 63);
+            resources.ApplyResources(this.Tb_JsonToXmlArchiveJsonPath, "Tb_JsonToXmlArchiveJsonPath");
             this.Tb_JsonToXmlArchiveJsonPath.Name = "Tb_JsonToXmlArchiveJsonPath";
-            this.Tb_JsonToXmlArchiveJsonPath.Size = new System.Drawing.Size(633, 20);
-            this.Tb_JsonToXmlArchiveJsonPath.TabIndex = 117;
             // 
             // Cb_JsonToXmlUseConverter
             // 
-            this.Cb_JsonToXmlUseConverter.AutoSize = true;
-            this.Cb_JsonToXmlUseConverter.Location = new System.Drawing.Point(9, 348);
+            resources.ApplyResources(this.Cb_JsonToXmlUseConverter, "Cb_JsonToXmlUseConverter");
             this.Cb_JsonToXmlUseConverter.Name = "Cb_JsonToXmlUseConverter";
-            this.Cb_JsonToXmlUseConverter.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.Cb_JsonToXmlUseConverter.Size = new System.Drawing.Size(151, 17);
-            this.Cb_JsonToXmlUseConverter.TabIndex = 115;
-            this.Cb_JsonToXmlUseConverter.Text = "Use Json to Xml Converter";
             this.Cb_JsonToXmlUseConverter.UseVisualStyleBackColor = true;
-            this.Cb_JsonToXmlUseConverter.Visible = false;
             // 
             // L_JsonPath
             // 
-            this.L_JsonPath.AutoSize = true;
-            this.L_JsonPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.L_JsonPath.Location = new System.Drawing.Point(6, 14);
+            resources.ApplyResources(this.L_JsonPath, "L_JsonPath");
             this.L_JsonPath.Name = "L_JsonPath";
-            this.L_JsonPath.Size = new System.Drawing.Size(67, 13);
-            this.L_JsonPath.TabIndex = 1;
-            this.L_JsonPath.Text = "Json Path:";
             // 
             // L_XmlPath
             // 
-            this.L_XmlPath.AutoSize = true;
-            this.L_XmlPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.L_XmlPath.Location = new System.Drawing.Point(6, 40);
+            resources.ApplyResources(this.L_XmlPath, "L_XmlPath");
             this.L_XmlPath.Name = "L_XmlPath";
-            this.L_XmlPath.Size = new System.Drawing.Size(66, 13);
-            this.L_XmlPath.TabIndex = 3;
-            this.L_XmlPath.Text = "XML Path:";
             // 
             // Tb_JsonToXmlJsonPath
             // 
-            this.Tb_JsonToXmlJsonPath.Location = new System.Drawing.Point(129, 11);
+            resources.ApplyResources(this.Tb_JsonToXmlJsonPath, "Tb_JsonToXmlJsonPath");
             this.Tb_JsonToXmlJsonPath.Name = "Tb_JsonToXmlJsonPath";
-            this.Tb_JsonToXmlJsonPath.Size = new System.Drawing.Size(633, 20);
-            this.Tb_JsonToXmlJsonPath.TabIndex = 2;
             // 
             // Tb_JsonToXmlXmlPath
             // 
-            this.Tb_JsonToXmlXmlPath.Location = new System.Drawing.Point(129, 37);
+            resources.ApplyResources(this.Tb_JsonToXmlXmlPath, "Tb_JsonToXmlXmlPath");
             this.Tb_JsonToXmlXmlPath.Name = "Tb_JsonToXmlXmlPath";
-            this.Tb_JsonToXmlXmlPath.Size = new System.Drawing.Size(633, 20);
-            this.Tb_JsonToXmlXmlPath.TabIndex = 4;
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Location = new System.Drawing.Point(12, 12);
+            resources.ApplyResources(this.tabControl1, "tabControl1");
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(776, 397);
-            this.tabControl1.TabIndex = 7;
             // 
             // FormConfig
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.Btn_SaveExit);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.Btn_SaveConfig);
             this.Name = "FormConfig";
-            this.Text = "Config";
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
@@ -189,5 +155,6 @@ namespace JsonToXml_Config
         private TabControl tabControl1;
         private Label L_JsonToXmlArchiveJsonPath;
         private TextBox Tb_JsonToXmlArchiveJsonPath;
+        private CheckBox Cb_JsonToXmlUseLogging;
     }
 }

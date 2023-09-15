@@ -28,6 +28,10 @@ namespace JsonToXml_Config
             {
                 this.Cb_JsonToXmlUseConverter.Checked = true;
             }
+            if (ConfigurationSettings.JsonToXmlUseLogging)
+            {
+                this.Cb_JsonToXmlUseLogging.Checked = true;
+            }
         }
 
         private void writeConfig()
@@ -36,6 +40,7 @@ namespace JsonToXml_Config
             ConfigurationSettings.JsonToXmlJsonPath = PathMod(this.Tb_JsonToXmlJsonPath.Text);
             ConfigurationSettings.JsonToXmlArchiveJsonPath = PathMod(this.Tb_JsonToXmlArchiveJsonPath.Text);
             ConfigurationSettings.JsonToXmlUseConverter = this.bJsonToXmlUseConverter();
+            ConfigurationSettings.JsonToXmlUseLogging = this.bJsonToXmlUseLogging();
 
             ConfigurationSettings.SaveConfig(this.ConfigFile);
         }
@@ -54,6 +59,18 @@ namespace JsonToXml_Config
         public bool bJsonToXmlUseConverter()
         {
             if (Cb_JsonToXmlUseConverter.Checked)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool bJsonToXmlUseLogging()
+        {
+            if (Cb_JsonToXmlUseLogging.Checked)
             {
                 return true;
             }
