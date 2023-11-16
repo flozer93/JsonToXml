@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using Newtonsoft.Json;
 using JsonToXml_Config;
 using NLog;
+using System.Reflection;
 //Integrate Logging
 
 namespace JsonToXml_Lib
@@ -16,7 +17,8 @@ namespace JsonToXml_Lib
         //private static Boolean loggingEnabled = File.Exists(System.IO.Directory.GetCurrentDirectory() + @"\NLog.config");
         //private static Boolean loggingEnabled = File.Exists(Environment.CurrentDirectory + @"\NLog.config");
         //private static Boolean loggingEnabled = File.Exists(Environment.CurrentDirectory + @"\" + LogConfigFileName);
-        private static Boolean loggingEnabled = File.Exists(Path.Combine(Environment.CurrentDirectory, LogConfigFileName));
+        //private static Boolean loggingEnabled = File.Exists(Path.Combine(Environment.CurrentDirectory, LogConfigFileName));
+        private static Boolean loggingEnabled = File.Exists(Path.Combine(Assembly.GetEntryAssembly().Location, LogConfigFileName));
         //private static Boolean loggingEnabled = File.Exists(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase), LogConfigFileName));
 
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
@@ -54,6 +56,7 @@ namespace JsonToXml_Lib
                 {
                     DoLogError($"{ex.Message}");
                     DoLogWarn($"No Config found!");
+                    throw ex;
                 }
 
                 if (string.IsNullOrEmpty(ConfigurationSettings.JsonToXmlJsonPath) || string.IsNullOrEmpty(ConfigurationSettings.JsonToXmlJsonPath))
@@ -71,6 +74,7 @@ namespace JsonToXml_Lib
             catch (Exception ex)
             {
                 DoLogError(ex.ToString());
+                throw ex;
             }
         }
 
