@@ -86,11 +86,13 @@ namespace JsonToXml_Lib
                 try
                 {
                     string filename = file.Name.Replace(file.Extension, "");
-                    ConvertJsonToXml(targetdir, file.FullName, filename);
-                    if (!string.IsNullOrEmpty(archivedir))
+                    if (ConvertJsonToXml(targetdir, file.FullName, filename))
                     {
-                        file.MoveTo(archivedir + file.Name);
-                        DoLogInformation("Archived: " + archivedir + file.Name);
+                        if (!string.IsNullOrEmpty(archivedir))
+                        {
+                            file.MoveTo(archivedir + file.Name);
+                            DoLogInformation("Archived: " + archivedir + file.Name);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -100,7 +102,7 @@ namespace JsonToXml_Lib
             }
         }
 
-        private static void ConvertJsonToXml(string targetdir, string jsonfile, string filename)
+        private static bool ConvertJsonToXml(string targetdir, string jsonfile, string filename)
         {
             try
             {
@@ -126,10 +128,12 @@ namespace JsonToXml_Lib
                     xmlDoc.Save(xmlfile);
                 }
                 DoLogInformation("Converted: " + jsonfile);
+                return true;
             }
             catch (Exception ex)
             {
                 DoLogError(ex.ToString());
+                return false;
             }
         }
         private static void DoLogInformation(string message)
