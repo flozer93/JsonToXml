@@ -18,11 +18,23 @@ namespace JsonToXml_Lib
         //private static Boolean loggingEnabled = File.Exists(Environment.CurrentDirectory + @"\NLog.config");
         //private static Boolean loggingEnabled = File.Exists(Environment.CurrentDirectory + @"\" + LogConfigFileName);
         //private static Boolean loggingEnabled = File.Exists(Path.Combine(Environment.CurrentDirectory, LogConfigFileName));
-        private static Boolean loggingEnabled = File.Exists(Path.Combine(Assembly.GetEntryAssembly().Location, LogConfigFileName));
+        //private static Boolean loggingEnabled = File.Exists(Path.Combine(Assembly.GetEntryAssembly().Location, LogConfigFileName));
+        private static string AppPath()
+        {
+            string lstr = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);
+            if (lstr.ToLower().StartsWith("file:"))
+                lstr = new Uri(lstr).LocalPath;
+            return lstr;
+        }
+        private static Boolean loggingEnabled = File.Exists(Path.Combine(AppPath(), LogConfigFileName));
         //private static Boolean loggingEnabled = File.Exists(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase), LogConfigFileName));
 
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
+        public static Boolean CheckConfig()
+        {
+            return ConfigurationSettings.CheckConfig();
+        }
         public static void RunJsonToXmlWithOutConfig(string sourcedir, string targetdir, string archivedir)
         {
             if (string.IsNullOrEmpty(sourcedir) || string.IsNullOrEmpty(targetdir))
@@ -64,6 +76,7 @@ namespace JsonToXml_Lib
                     string exString = string.Format("Config not valid:\nJsonToXmlJsonPath:{0}\nJsonToXmlJsonPath:{1}", ConfigurationSettings.JsonToXmlJsonPath, ConfigurationSettings.JsonToXmlJsonPath);
                     DoLogError(exString);
                     throw new Exception();
+                    //throw new Exception(exString);
                 }
                 else
                 {

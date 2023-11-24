@@ -45,14 +45,37 @@ namespace JsonToXml
                     cmd_helper.PrintUsage();
                 }
 
-                string SourceDir = Program.GetParamValue(args, "-sourcedir");
-                string TargetDir = Program.GetParamValue(args, "-targetdir");
-                string ArchiveDir = Program.GetParamValue(args, "-archivedir");
-
-                string CheckConfig = Program.GetParamValue(args, "-checkconfig");
+                if (Program.GetParamPresence(args, "-checkconfig"))
+                {
+                    if (JsonToXml_Lib.JsonToXml.CheckConfig() == true)
+                    {
+                        Console.WriteLine("Config found");
+                        //++ Debug
+                        string LogConfigFileName = "NLog.config";
+                        string AppPath()
+                        {
+                            //Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase), LogConfigFileName);
+                            string lstr = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);
+                            if (lstr.ToLower().StartsWith("file:"))
+                                lstr = new Uri(lstr).LocalPath;
+                            return lstr;
+                        }
+                        Console.WriteLine(AppPath());
+                        Console.WriteLine(Path.Combine(AppPath(), LogConfigFileName));
+                        //-- Debug
+                    }
+                    else
+                    {
+                        Console.WriteLine("No config found!");
+                    }
+                }
 
                 if ((Program.GetParamPresence(args, "-sourcedir")) || (Program.GetParamPresence(args, "-targetdir")))
                 {
+                    string SourceDir = Program.GetParamValue(args, "-sourcedir");
+                    string TargetDir = Program.GetParamValue(args, "-targetdir");
+                    string ArchiveDir = Program.GetParamValue(args, "-archivedir");
+
                     if (string.IsNullOrEmpty(SourceDir) || string.IsNullOrEmpty(TargetDir))
                     {
                         if (string.IsNullOrEmpty(SourceDir))

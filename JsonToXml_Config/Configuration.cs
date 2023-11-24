@@ -12,12 +12,25 @@ namespace JsonToXml_Config
         public static NameValueCollection AppSettings;
         private static XmlDocument oXml = new XmlDocument();
 
+        public static Boolean CheckConfig()
+        {
+            string str = ConfigPath();
+            if (str == null)
+                return false;
+            else
+                return true;
+        }
         public static void LoadConfig()
+        {
+            string str = ConfigPath();
+            ConfigurationSettings.LoadConfig(Path.GetFullPath(str));
+        }
+        private static string ConfigPath()
         {
             string str = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase), ConfigFileName);
             if (str.ToLower().StartsWith("file:"))
                 str = new Uri(str).LocalPath;
-            ConfigurationSettings.LoadConfig(Path.GetFullPath(str));
+            return str;
         }
 
         public static void LoadConfig(string ConfigFile)
