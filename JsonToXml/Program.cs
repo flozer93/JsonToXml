@@ -47,7 +47,7 @@ namespace JsonToXml
 
                 if (Program.GetParamPresence(args, "-checkconfig"))
                 {
-                    if (JsonToXml_Lib.JsonToXml.CheckConfig() == true)
+                    if (JsonToXml_Lib.JsonToXml.CheckConfig())
                     {
                         Console.WriteLine("Config found");
                         //++ Debug
@@ -92,7 +92,8 @@ namespace JsonToXml
                         JsonToXml_Lib.JsonToXml.RunJsonToXmlWithOutConfig(SourceDir, TargetDir, ArchiveDir);
                     }
                 }
-                else
+
+                if (!Program.GetParamPresence(args, ""))
                 {
                     try
                     {
@@ -108,7 +109,6 @@ namespace JsonToXml
             {
                 Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.InnerException.Message);
-                throw ex;
             }
         }
     }

@@ -7,6 +7,10 @@ using Newtonsoft.Json;
 using JsonToXml_Config;
 using NLog;
 using System.Reflection;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 //Integrate Logging
 
 namespace JsonToXml_Lib
@@ -122,6 +126,87 @@ namespace JsonToXml_Lib
                 using (StreamReader reader = new StreamReader(jsonfile))
                 {
                     string xmlfile = targetdir + filename + ".xml";
+                    if (!WriteXml(reader, xmlfile))
+                        return false;
+                }
+                DoLogInformation("Converted: " + jsonfile);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                DoLogError(ex.ToString());
+                return false;
+            }
+        }
+        private static bool WriteXml(StreamReader reader, string xmlfile)
+        {
+            /*==================================================*/
+            //Todo:
+            //
+            // - Newtonsoft.Json.Linq.JObject to dataTable
+            // - 
+            /*==================================================*/
+
+            XDocument xmlDoc = new XDocument(new XDeclaration("1.0", "utf-8", ""));
+            XElement root = new XElement("Root");
+            root.Name = "Result";
+            string jsonstring = reader.ReadToEnd();
+            var dataTable = ConvertJsonToDataTable(jsonstring);
+            try
+            {
+                /*
+                //++ Debug
+                DataSet dataSet = JsonConvert.DeserializeObject<DataSet>(jsonstring);
+                DataTable dataTable = dataSet.Tables[0];
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    Console.WriteLine(row["id"] + " - " + row["item"]);
+                }
+                Console.ReadLine();
+                //-- Debug
+                JArray jsonArray = JArray.Parse(jsonstring);
+                DataTable dataTable = new DataTable();
+                dataTable = JsonConvert.DeserializeObject<DataTable>(jsonArray.ToString());
+                */
+                root.Add(
+                         from row in dataTable.AsEnumerable()
+                         select new XElement("Record",
+                                             from column in dataTable.Columns.Cast<DataColumn>()
+                                             select new XElement(column.ColumnName, row[column])
+                                            )
+                       );
+
+                xmlDoc.Add(root);
+                xmlDoc.Save(xmlfile);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                DoLogError(dataTable.GetType().ToString());
+                DoLogError(ex.ToString());
+                throw new Exception("Error: " + dataTable.GetType().ToString());
+                return false;
+            }
+        }
+        private static DataTable ConvertJsonToDataTable(string jsonString)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<DataTable>(jsonString);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        private static bool ConvertJsonToXml_o(string targetdir, string jsonfile, string filename)
+        {
+            try
+            {
+                using (StreamReader reader = new StreamReader(jsonfile))
+                {
+                    string xmlfile = targetdir + filename + ".xml";
 
                     XDocument xmlDoc = new XDocument(new XDeclaration("1.0", "utf-8", ""));
                     XElement root = new XElement("Root");
@@ -129,6 +214,7 @@ namespace JsonToXml_Lib
                     string jsonstring = reader.ReadToEnd();
 
                     var dataTable = JsonConvert.DeserializeObject<DataTable>(jsonstring);
+                    
                     root.Add(
                              from row in dataTable.AsEnumerable()
                              select new XElement("Record",
