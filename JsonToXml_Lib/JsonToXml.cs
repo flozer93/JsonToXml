@@ -11,6 +11,7 @@ using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+//using System.Text.Json;
 //Integrate Logging
 
 namespace JsonToXml_Lib
@@ -126,7 +127,7 @@ namespace JsonToXml_Lib
                 using (StreamReader reader = new StreamReader(jsonfile))
                 {
                     string xmlfile = targetdir + filename + ".xml";
-                    if (!WriteXml(reader, xmlfile))
+                    if (!ConvertJson(reader, xmlfile))
                         return false;
                 }
                 DoLogInformation("Converted: " + jsonfile);
@@ -138,36 +139,64 @@ namespace JsonToXml_Lib
                 return false;
             }
         }
-        private static bool WriteXml(StreamReader reader, string xmlfile)
+        private static bool ConvertJson(StreamReader reader, string xmlfile)
         {
-            /*==================================================*/
             //Todo:
-            //
             // - Newtonsoft.Json.Linq.JObject to dataTable
-            // - 
-            /*==================================================*/
 
+            string jsonstring = reader.ReadToEnd();
+            
+            //++ Debug
+            //Console.WriteLine(jsonstring.GetType().ToString());
+            Console.WriteLine(jsonstring.GetType());
+            Console.ReadLine();
+            //-- Debug
+            
+            //JArray.Parse(jsonstring);
+            
+            bool retval = false;
+
+            try
+            {
+                //https://www.newtonsoft.com/json/help/html/DeserializeWithJsonSerializerFromFile.htm
+                JsonSerializer serializer = new JsonSerializer();
+                DataTable dataTable1 = (DataTable)serializer.Deserialize(reader, typeof(DataTable));
+                retval = WriteDataTableToXml(dataTable1, xmlfile);
+                return retval;
+            }
+            catch (Exception ex)
+            {
+                DoLogError(ex.ToString());
+            }
+
+            if (!retval)
+            {
+                var dataTable = ConvertJsonToDataTable(jsonstring);
+                DataSet dataSet = JsonConvert.DeserializeObject<DataSet>(jsonstring);
+
+                try
+                {
+                    retval = WriteDataTableToXml(dataTable, xmlfile);
+                    return retval;
+                }
+                catch (Exception ex)
+                {
+                    DoLogError(dataTable.GetType().ToString());
+                    DoLogError(ex.ToString());
+                    return false;
+                    throw new Exception("Error: " + dataTable.GetType().ToString());
+                }
+            }
+            return retval;
+        }
+        private static bool WriteDataTableToXml(DataTable dataTable, string xmlfile)
+        {
             XDocument xmlDoc = new XDocument(new XDeclaration("1.0", "utf-8", ""));
             XElement root = new XElement("Root");
             root.Name = "Result";
-            string jsonstring = reader.ReadToEnd();
-            var dataTable = ConvertJsonToDataTable(jsonstring);
+
             try
             {
-                /*
-                //++ Debug
-                DataSet dataSet = JsonConvert.DeserializeObject<DataSet>(jsonstring);
-                DataTable dataTable = dataSet.Tables[0];
-                foreach (DataRow row in dataTable.Rows)
-                {
-                    Console.WriteLine(row["id"] + " - " + row["item"]);
-                }
-                Console.ReadLine();
-                //-- Debug
-                JArray jsonArray = JArray.Parse(jsonstring);
-                DataTable dataTable = new DataTable();
-                dataTable = JsonConvert.DeserializeObject<DataTable>(jsonArray.ToString());
-                */
                 root.Add(
                          from row in dataTable.AsEnumerable()
                          select new XElement("Record",
@@ -185,8 +214,54 @@ namespace JsonToXml_Lib
             {
                 DoLogError(dataTable.GetType().ToString());
                 DoLogError(ex.ToString());
-                throw new Exception("Error: " + dataTable.GetType().ToString());
                 return false;
+                throw new Exception("Error: " + dataTable.GetType().ToString());
+            }
+        }
+        private static bool WriteXml_o(StreamReader reader, string xmlfile)
+        {
+            //Todo:
+            // - Newtonsoft.Json.Linq.JObject to dataTable
+
+            XDocument xmlDoc = new XDocument(new XDeclaration("1.0", "utf-8", ""));
+            XElement root = new XElement("Root");
+            root.Name = "Result";
+            string jsonstring = reader.ReadToEnd();
+            
+            //++ Debug
+            //Console.WriteLine(jsonstring.GetType().ToString());
+            Console.WriteLine(jsonstring.GetType());
+            Console.ReadLine();
+            //-- Debug
+            
+            JArray.Parse(jsonstring);
+
+
+
+            var dataTable = ConvertJsonToDataTable(jsonstring);
+            DataSet dataSet = JsonConvert.DeserializeObject<DataSet>(jsonstring);
+
+            try
+            {
+                root.Add(
+                         from row in dataTable.AsEnumerable()
+                         select new XElement("Record",
+                                             from column in dataTable.Columns.Cast<DataColumn>()
+                                             select new XElement(column.ColumnName, row[column])
+                                            )
+                       );
+
+                xmlDoc.Add(root);
+                xmlDoc.Save(xmlfile);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                DoLogError(dataTable.GetType().ToString());
+                DoLogError(ex.ToString());
+                return false;
+                throw new Exception("Error: " + dataTable.GetType().ToString());
             }
         }
         private static DataTable ConvertJsonToDataTable(string jsonString)

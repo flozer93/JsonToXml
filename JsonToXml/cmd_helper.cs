@@ -49,6 +49,7 @@ namespace JsonToXml
             Console.WriteLine("  -archivedir       Optional.If not set the sourcefiles will be deleted after.");
             Console.WriteLine("");
             Console.WriteLine("  -? or /?          Displays this text.");
+            Console.WriteLine("");
         }
     }
 }

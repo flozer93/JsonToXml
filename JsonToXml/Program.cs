@@ -93,7 +93,7 @@ namespace JsonToXml
                     }
                 }
 
-                if (!Program.GetParamPresence(args, ""))
+                if (args == null || args.Length == 0)
                 {
                     try
                     {
