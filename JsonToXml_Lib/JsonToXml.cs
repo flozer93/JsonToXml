@@ -141,27 +141,19 @@ namespace JsonToXml_Lib
         }
         private static bool ConvertJson(StreamReader reader, string xmlfile)
         {
+            string jsonstring = reader.ReadToEnd();
+            bool retval = false;
+
             //Todo:
             // - Newtonsoft.Json.Linq.JObject to dataTable
-
-            string jsonstring = reader.ReadToEnd();
-            
-            //++ Debug
-            //Console.WriteLine(jsonstring.GetType().ToString());
-            Console.WriteLine(jsonstring.GetType());
-            Console.ReadLine();
-            //-- Debug
-            
             //JArray.Parse(jsonstring);
-            
-            bool retval = false;
 
             try
             {
                 //https://www.newtonsoft.com/json/help/html/DeserializeWithJsonSerializerFromFile.htm
                 JsonSerializer serializer = new JsonSerializer();
-                DataTable dataTable1 = (DataTable)serializer.Deserialize(reader, typeof(DataTable));
-                retval = WriteDataTableToXml(dataTable1, xmlfile);
+                DataTable dataTable = (DataTable)serializer.Deserialize(reader, typeof(DataTable));
+                retval = WriteDataTableToXml(dataTable, xmlfile);
                 return retval;
             }
             catch (Exception ex)
@@ -212,7 +204,7 @@ namespace JsonToXml_Lib
             }
             catch (Exception ex)
             {
-                DoLogError(dataTable.GetType().ToString());
+                DoLogError(dataTable.GetType().ToString()); //
                 DoLogError(ex.ToString());
                 return false;
                 throw new Exception("Error: " + dataTable.GetType().ToString());
