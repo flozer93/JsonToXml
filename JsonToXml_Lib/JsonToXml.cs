@@ -147,12 +147,13 @@ namespace JsonToXml_Lib
             //Todo:
             // - Newtonsoft.Json.Linq.JObject to dataTable
             //JArray.Parse(jsonstring);
-
+            /*
             try
             {
                 //https://www.newtonsoft.com/json/help/html/DeserializeWithJsonSerializerFromFile.htm
                 JsonSerializer serializer = new JsonSerializer();
-                DataTable dataTable = (DataTable)serializer.Deserialize(reader, typeof(DataTable));
+                //DataTable dataTable = (DataTable)serializer.Deserialize(reader, typeof(DataTable));
+                DataTable dataTable = ConvertJsonToDataTable(jsonstring);
                 retval = WriteDataTableToXml(dataTable, xmlfile);
                 return retval;
             }
@@ -160,11 +161,11 @@ namespace JsonToXml_Lib
             {
                 DoLogError(ex.ToString());
             }
-
+            */
             if (!retval)
             {
                 var dataTable = ConvertJsonToDataTable(jsonstring);
-                DataSet dataSet = JsonConvert.DeserializeObject<DataSet>(jsonstring);
+                //DataSet dataSet = JsonConvert.DeserializeObject<DataSet>(jsonstring);
 
                 try
                 {
@@ -227,8 +228,6 @@ namespace JsonToXml_Lib
             //-- Debug
             
             JArray.Parse(jsonstring);
-
-
 
             var dataTable = ConvertJsonToDataTable(jsonstring);
             DataSet dataSet = JsonConvert.DeserializeObject<DataSet>(jsonstring);
