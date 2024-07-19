@@ -162,6 +162,18 @@ namespace JsonToXml_Lib
                 DoLogError(ex.ToString());
             }
             */
+            if (!retval) //16.07.2024 V2
+            {
+                try
+                {
+                    retval = ConvertAndWriteJsonToXml(jsonstring, xmlfile);
+                }
+                catch (Exception ex)
+                {
+                    DoLogError(ex.ToString());
+                    return false;
+                }
+            }
             if (!retval)
             {
                 var dataTable = ConvertJsonToDataTable(jsonstring);
@@ -169,7 +181,18 @@ namespace JsonToXml_Lib
 
                 try
                 {
-                    retval = WriteDataTableToXml(dataTable, xmlfile);
+                    //retval = WriteDataTableToXml(dataTable, xmlfile);
+                    /*
+                    if (!retval) //15.07.2024 V1
+                    {
+                        retval = ConvertAndWriteDataToXml(jsonstring, xmlfile);
+                    }
+                    */
+                    if (!retval) //15.07.2024 V2
+                    {
+                        retval = ConvertAndWriteJsonToXml(jsonstring, xmlfile);
+                    }
+
                     return retval;
                 }
                 catch (Exception ex)
@@ -210,6 +233,106 @@ namespace JsonToXml_Lib
                 return false;
                 throw new Exception("Error: " + dataTable.GetType().ToString());
             }
+        }
+        private static bool ConvertAndWriteJsonToXml(string jsonstring, string xmlfile) //15.07.2024 V2
+        {
+            try
+            {
+                // Deserialisiere die JSON-Datei in ein Objekt
+                var jsonObject = JsonConvert.DeserializeObject(jsonstring);
+
+                // Konvertiere das Objekt in ein XDocument
+                XDocument xmlDoc = JsonConvert.DeserializeXNode(jsonstring, "Root");
+
+                // Speichere das XDocument als XML-Datei
+                xmlDoc.Save(xmlfile);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                DoLogError(ex.ToString());
+                return false;
+            }
+            /*
+            try
+            {
+                //JsonConvert.DeserializeXmlNode(jsonstring);
+                XDocument xmlDoc = new XDocument(new XDeclaration("1.0", "utf-8", ""), JsonConvert.DeserializeXmlNode(jsonstring));
+                xmlDoc.Save(xmlfile);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                DoLogError(ex.ToString());
+                return false;
+            }
+            */
+        }
+        
+        private static bool ConvertAndWriteDataToXml(string jsonstring, string xmlfile) //15.07.2024 V1
+        {
+            //
+            JsonConvert.DeserializeXmlNode(jsonstring);
+
+            //
+            XDocument xmlDoc = new XDocument(new XDeclaration("1.0", "utf-8", ""));
+            XElement root = new XElement("Root");
+            root.Name = "Result";
+
+            new XElement("Record");
+            Type type = null;
+            JsonConvert.DeserializeAnonymousType(jsonstring, type);
+            /*
+            if (type.IsArray)
+            {
+                var array = JsonConvert.DeserializeObject(jsonstring, type);
+                root.Add(
+                    from row in array
+                    select new XElement("Record",
+                        from column in array.Columns.Cast<DataColumn>()
+                        select new XElement(column.ColumnName, row[column])
+                    )
+                );
+            }
+            */
+            if (type.IsCOMObject)
+            {
+                var dataTable = ConvertJsonToDataTable(jsonstring);
+                root.Add(
+                         from row in dataTable.AsEnumerable()
+                         select new XElement("Record",
+                                             from column in dataTable.Columns.Cast<DataColumn>()
+                                             select new XElement(column.ColumnName, row[column])
+                                            )
+                       );
+            }
+            /*
+            JsonReader jsReader = new JsonReader(jsonstring);
+
+            try
+            {
+                root.Add(
+                         from row in dataTable.AsEnumerable()
+                         select new XElement("Record",
+                                             from column in dataTable.Columns.Cast<DataColumn>()
+                                             select new XElement(column.ColumnName, row[column])
+                                            )
+                       );
+
+                xmlDoc.Add(root);
+                xmlDoc.Save(xmlfile);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                DoLogError(dataTable.GetType().ToString()); //
+                DoLogError(ex.ToString());
+                return false;
+                throw new Exception("Error: " + dataTable.GetType().ToString());
+            }
+            */
+            return false;
         }
         private static bool WriteXml_o(StreamReader reader, string xmlfile)
         {
