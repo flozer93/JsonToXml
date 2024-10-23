@@ -112,6 +112,7 @@ namespace JsonToXml_Lib
                             DoLogInformation("Archived: " + archivedir + file.Name);
                         }
                     }
+                    //change here 23.10.2024
                 }
                 catch (Exception ex)
                 {
@@ -128,7 +129,9 @@ namespace JsonToXml_Lib
                 {
                     string xmlfile = targetdir + filename + ".xml";
                     if (!ConvertJson(reader, xmlfile))
+                    {
                         return false;
+                    }
                 }
                 DoLogInformation("Converted: " + jsonfile);
                 return true;
@@ -162,7 +165,47 @@ namespace JsonToXml_Lib
                 DoLogError(ex.ToString());
             }
             */
-            if (!retval) //16.07.2024 V2
+
+            // Deserialize the JSON string to a dynamic object
+            dynamic obj = JsonConvert.DeserializeObject(jsonstring);
+            // Get the type of the object
+            Type objType = obj.GetType();
+
+            switch (objType.Name)
+            {
+                case "JObject":
+                    try
+                    {
+                        retval = ConvertAndWriteJsonToXml(jsonstring, xmlfile);
+                    }
+                    catch (Exception ex)
+                    {
+                        DoLogError(ex.ToString());
+                        return false;
+                    }
+                    break;
+                case "JArray":
+                    var dataTable = ConvertJsonToDataTable(jsonstring);
+                    try
+                    {
+                        retval = WriteDataTableToXml(dataTable, xmlfile);
+                        return retval;
+                    }
+                    catch (Exception ex)
+                    {
+                        DoLogError(dataTable.GetType().ToString());
+                        DoLogError(ex.ToString());
+                        return false;
+                        throw new Exception("Error: " + dataTable.GetType().ToString());
+                    }
+                    break;
+                default:
+                    //JValue
+                    //JProperty
+                    break;
+            }
+            /*
+            if (objType.Name == "JObject")
             {
                 try
                 {
@@ -174,25 +217,13 @@ namespace JsonToXml_Lib
                     return false;
                 }
             }
-            if (!retval)
+
+            if (objType.Name == "JArray")
             {
                 var dataTable = ConvertJsonToDataTable(jsonstring);
-                //DataSet dataSet = JsonConvert.DeserializeObject<DataSet>(jsonstring);
-
                 try
                 {
-                    //retval = WriteDataTableToXml(dataTable, xmlfile);
-                    /*
-                    if (!retval) //15.07.2024 V1
-                    {
-                        retval = ConvertAndWriteDataToXml(jsonstring, xmlfile);
-                    }
-                    */
-                    if (!retval) //15.07.2024 V2
-                    {
-                        retval = ConvertAndWriteJsonToXml(jsonstring, xmlfile);
-                    }
-
+                    retval = WriteDataTableToXml(dataTable, xmlfile);
                     return retval;
                 }
                 catch (Exception ex)
@@ -203,6 +234,7 @@ namespace JsonToXml_Lib
                     throw new Exception("Error: " + dataTable.GetType().ToString());
                 }
             }
+            */
             return retval;
         }
         private static bool WriteDataTableToXml(DataTable dataTable, string xmlfile)
